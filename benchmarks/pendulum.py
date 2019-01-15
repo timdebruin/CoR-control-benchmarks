@@ -13,16 +13,18 @@ class PendulumBenchmark(ControlBenchmark):
                  sampling_time: float = 0.02,
                  max_seconds: float = 2.5,
                  reward_type: RewardType = RewardType.QUADRATIC,
+                 max_voltage: float = 2.,
                  ):
         """ Create an instance of the pendulum benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
-        :param reward_type: the type of reward function to use. """
+        :param reward_type: the type of reward function to use.
+        :param max_voltage: """
         super().__init__(
             state_shift=np.array([0., 0.]),
             state_scale=np.array([np.pi, 30]),  # states in  [-pi, pi], [-30, 30]
             action_shift=np.array([0.]),
-            action_scale=np.array([3.]),  # actions in [-3V, 3V]
+            action_scale=np.array([max_voltage]),  # actions in [-max_voltage, max_voltage]
             initial_states=[
                 np.array([0., 0.]),
             ],
