@@ -1,6 +1,6 @@
 import random
 
-from benchmarks.pendulum import PendulumBenchmark
+from cor_control_benchmarks.pendulum import PendulumBenchmark
 
 pendulum = PendulumBenchmark()
 

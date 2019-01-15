@@ -15,9 +15,9 @@ Here the most basic usage (enough for trial based control) is shown:
 
 ```python
 import numpy as np
-from benchmarks.magman import MagmanBenchmark
+import cor_control_benchmarks as cb
 
-env = MagmanBenchmark(magnets=4)
+env = cb.magman.MagmanBenchmark(magnets=4)
 
 for episode in range(10):
     terminal = False  # episodes terminate after a time limit or, for some benchmarks, 
@@ -37,11 +37,10 @@ This repository contains the following benchmarks:
 
 ### Pendulum swing-up
 ```python
-from benchmarks.pendulum import PendulumBenchmark
-from benchmarks.control_benchmark import RewardType
-env = PendulumBenchmark(max_voltage=2.0, sampling_time=0.02, max_seconds=2.5, reward_type=RewardType.QUADRATIC)
+import cor_control_benchmarks as cb
+env = cb.pendulum.PendulumBenchmark(max_voltage=2.0, sampling_time=0.02, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.QUADRATIC)
 ```
-See [benchmarks/pendulum.py](benchmarks/pendulum.py) for the dynamics model and available parameters. 
+See [benchmarks/pendulum.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters. 
 
 Swing up an under-actuated pendulum. 
 To solve the benchmark the pendulum will need to be swung to one side to build momentum before swinging in the opposite 
@@ -61,11 +60,10 @@ This benchmark has been used in (among others) the following papers:
 
 ### Magnetic manipulator
 ```python
-from benchmarks.magman import MagmanBenchmark
-from benchmarks.control_benchmark import RewardType
-env = MagmanBenchmark(magnets=4, sampling_time=0.02, max_seconds=2.5, reward_type=RewardType.QUADRATIC)
+import cor_control_benchmarks as cb
+env = cb.magman.MagmanBenchmark(magnets=4, sampling_time=0.02, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.QUADRATIC)
 ```
-See [benchmarks/magman.py](benchmarks/pendulum.py) for the dynamics model and available parameters.
+See [benchmarks/magman.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters.
 
 Position a magnetic ball by controlling the current through several electromagnets positioned under a
 1-dimensional track that the ball rolls on.
@@ -83,9 +81,8 @@ Model of a Segway. The segway starts out under a significant angle and the contr
 quickly and stabilize.
 
 ```python
-from benchmarks.segway import SegwayBenchmark
-from benchmarks.control_benchmark import RewardType
-env = SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=RewardType.ABSOLUTE)
+import cor_control_benchmarks as cb
+env = cb.segway.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.ABSOLUTE)
 ```
-See [benchmarks/magman.py](benchmarks/segway.py) for the dynamics model and available parameters.
+See [benchmarks/magman.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
 

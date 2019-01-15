@@ -1,4 +1,4 @@
-from benchmarks.control_benchmark import *
+from cor_control_benchmarks.control_benchmark import *
 
 
 class PendulumBenchmark(ControlBenchmark):

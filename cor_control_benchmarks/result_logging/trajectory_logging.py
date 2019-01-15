@@ -22,18 +22,3 @@ class TrajectoryLogger(object):
 
     def step_log_post(self, reward: float, terminal: bool):
         raise NotImplementedError
-
-
-class DummyLogger(TrajectoryLogger):
-
-    def __init__(self):
-        super().__init__()
-
-    def reset_log(self):
-        pass
-
-    def step_log_pre(self, state: np.ndarray, action: np.ndarray):
-        pass
-
-    def step_log_post(self, reward: float, terminal: bool):
-        pass

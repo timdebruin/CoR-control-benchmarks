@@ -5,7 +5,7 @@ from enum import Enum
 # import gym.spaces
 import numpy as np
 
-from result_logging.trajectory_logging import TrajectoryLogger, DummyLogger
+from cor_control_benchmarks.result_logging.trajectory_logging import TrajectoryLogger
 
 
 class RewardType(Enum):
@@ -27,7 +27,7 @@ class DomainBound(Enum):
 class ControlBenchmark(object):
     """The control benchmark base class. Do not use directly, use a subclass.
 
-    The objective of these benchmarks is make the state of a dynamical system converge to a target state.
+    The objective of these cor_control_benchmarks is make the state of a dynamical system converge to a target state.
     """
 
     def __init__(self,
@@ -43,7 +43,7 @@ class ControlBenchmark(object):
                  domain_bound_handling: List[DomainBound],
                  reward_type: RewardType) -> None:
         """Initialization function of the control benchmark base class.
-        Should be called from the init functions of the actual benchmarks.
+        Should be called from the init functions of the actual cor_control_benchmarks.
 
         :param state_shift: shift to use to go between normalized and benchmark states:
          normalized = (benchmark - shift) / scale
@@ -86,7 +86,7 @@ class ControlBenchmark(object):
         self._state: np.ndarray = None
         self._u: np.ndarray = None
 
-        self.logging: TrajectoryLogger = DummyLogger()  # Result logging can be attached later
+        self.loggers: List[TrajectoryLogger] = []  # Result loggers can be attached later
 
         # Variables only used for compatibility with functions that expect an OpenAI gym environment
         # self.action_space = gym.spaces.Box(low=-1, high=1, shape=(len(self.action_shift),), dtype=np.float32)
@@ -257,13 +257,16 @@ class ControlBenchmark(object):
         return vector * scale + shift if de_norm else (vector - shift) / scale
 
     def _reset_log(self) -> None:
-        """Notify the logger that the environment has been reset."""
-        self.logging.reset_log()
+        """Notify the loggers that the environment has been reset."""
+        for logger in self.loggers:
+            logger.reset_log()
 
     def _step_log_pre(self) -> None:
         """ Logs the state-action (before dynamics function is called)."""
-        self.logging.step_log_pre(self.true_state, self._u)
+        for logger in self.loggers:
+            logger.step_log_pre(self.true_state, self._u)
 
     def _step_log_post(self, reward: float, terminal: bool) -> None:
         """ Logs the reward and logs sequence based on terminal and reward sum (after dynamics function is called)."""
-        self.logging.step_log_post(reward, terminal)
+        for logger in self.loggers:
+            logger.step_log_post(reward, terminal)
