@@ -37,4 +37,3 @@ class DummyLogger(TrajectoryLogger):
 
     def step_log_post(self, reward: float, terminal: bool):
         pass
-

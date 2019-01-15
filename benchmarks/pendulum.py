@@ -2,12 +2,22 @@ from benchmarks.control_benchmark import *
 
 
 class PendulumBenchmark(ControlBenchmark):
+    """ Swing up an under-actuated pendulum. To solve the benchmark the pendulum will need to be swung to one side to
+    build momentum before swinging in the opposite direction and stabilizing in the upright position.
+
+    The parameters for the dynamics are based on a physical setup present in the Delft University of Technology
+    DCSC / CoR lab.
+    """
 
     def __init__(self,
                  sampling_time: float = 0.02,
-                 max_seconds: float = 4.0,
+                 max_seconds: float = 2.5,
                  reward_type: RewardType = RewardType.QUADRATIC,
                  ):
+        """ Create an instance of the pendulum benchmark.
+        :param sampling_time: number of seconds between control decisions and observations.
+        :param max_seconds: number of seconds per episode
+        :param reward_type: the type of reward function to use. """
         super().__init__(
             state_shift=np.array([0., 0.]),
             state_scale=np.array([np.pi, 30]),  # states in  [-pi, pi], [-30, 30]
@@ -28,18 +38,23 @@ class PendulumBenchmark(ControlBenchmark):
 
     @property
     def reward(self) -> float:
+        """Obtain the reward based on the current state and the action that resulted in the transition to that state.
+        Scaled here to give rewards of around 0.5 initially."""
         return super().reward / 100
 
     @property
     def name(self) -> str:
+        """Return an identifier that describes the benchmark for fair comparisons."""
         return f'pendulum_swingup_v0-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
 
     def _eom(self, state_action: np.ndarray):
-        """Equations of motion for DCSC/CoR inverted pendulum setup
+        """Equations of motion for DCSC/CoR inverted pendulum setup.
         :param state_action: concatenated state and action
-        :return: derivative of the state-action
-        """
+        :return: derivative of the state-action"""
+
         x = state_action
+        dx = np.zeros_like(x)
+
         angle = x[0]
         angular_velocity = x[1]
 
@@ -50,8 +65,6 @@ class PendulumBenchmark(ControlBenchmark):
         damping = 3e-6  # Viscous damping
         torque_constant = 5.36e-2  # Torque constant
         rotor_resistance = 9.5  # Rotor resistance
-
-        dx = np.zeros((3,))
 
         # derivative of the angle
         dx[0] = angular_velocity
@@ -66,11 +79,9 @@ class PendulumBenchmark(ControlBenchmark):
         return dx
 
     def _derivative_dimension(self, state_dimension: int) -> int:
+        """ Return the index in the state vector of the derivative of the state_dimension index,
+        return -1 if the derivative of the given state component is not in the state vector.
+        :param state_dimension: the index in the state of the component that the derivative should be of
+        :return: the index of the state vector component that contains the derivative, or -1 if the
+        derivative is not in the state vector"""
         return [1, -1, -1][state_dimension]
-
-
-if __name__ == '__main__':
-    m = PendulumBenchmark()
-    assert np.allclose(m.denormalize_action(np.array([-1.])), np.array([-3.]))
-    assert np.allclose(m.denormalize_state(np.array([-1., 0.])), np.array([-np.pi, 0.0]))
-    assert np.allclose(m.normalize_state(np.array([np.pi, 30])), np.array([1., 1.]))
