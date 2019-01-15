@@ -10,6 +10,11 @@ This repository (will) contain(s) both these benchmarks as well as several imple
 This readme contains instructions for using the benchmarks, and references to papers that have used these benchmarks. 
 
 ## Usage
+Installation / updating:
+
+`pip install --user --upgrade git+git://github.com/timdebruin/CoR-control-benchmarks`
+
+
 The file [example.py](example.py) contains examples of using these benchmarks and the helper code available. 
 Here the most basic usage (enough for trial based control) is shown:  
 
