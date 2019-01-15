@@ -1,3 +1,4 @@
+'''
 @inproceedings{derner2018reinforcement,
   title={Reinforcement Learning with Symbolic Input-Output Models},
   author={Derner, Erik and Kubal{\'\i}k, Ji{\v{r}}{\'\i} and Babu{\v{s}}ka, Robert},
@@ -6,3 +7,4 @@
   year={2018},
   organization={IEEE}
 }
+'''
