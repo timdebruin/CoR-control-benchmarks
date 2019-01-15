@@ -34,6 +34,8 @@ class PendulumBenchmark(ControlBenchmark):
             target_action=np.array([0.]),
             state_penalty_weights=np.array([5., 0.1]),
             action_penalty_weights=np.array([1.]),
+            binary_reward_state_tolerance=np.array([0.05, 0.1]),
+            binary_reward_action_tolerance=np.array([0.1]),
             domain_bound_handling=[DomainBound.WRAP, DomainBound.IGNORE],  # 'Pendulum angle, angular velocity'
             reward_type=reward_type,
         )
@@ -47,7 +49,8 @@ class PendulumBenchmark(ControlBenchmark):
     @property
     def name(self) -> str:
         """Return an identifier that describes the benchmark for fair comparisons."""
-        return f'pendulum_swingup_v0-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
+        return f'pendulum_swingup_v0-' \
+            f'max_voltage_{self.action_scale[0]}-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
 
     def _eom(self, state_action: np.ndarray):
         """Equations of motion for DCSC/CoR inverted pendulum setup.

@@ -1,5 +1,5 @@
 import random
-from typing import Union, Any, Tuple, List
+from typing import Union, Any, Tuple, List, Optional, Callable
 from enum import Enum
 
 # import gym.spaces
@@ -33,13 +33,15 @@ class ControlBenchmark(object):
     def __init__(self,
                  state_shift: np.ndarray, state_scale: np.ndarray,
                  action_shift: np.ndarray, action_scale: np.ndarray,
-                 initial_states: List[np.ndarray],
+                 initial_states: Optional[Union[List[np.ndarray], Callable]],
                  sampling_time: float,
                  max_seconds: float,
                  target_state: np.ndarray,
                  target_action: np.ndarray,
                  state_penalty_weights: np.ndarray,
                  action_penalty_weights: np.ndarray,
+                 binary_reward_state_tolerance: np.ndarray,
+                 binary_reward_action_tolerance: np.ndarray,
                  domain_bound_handling: List[DomainBound],
                  reward_type: RewardType) -> None:
         """Initialization function of the control benchmark base class.
@@ -53,17 +55,21 @@ class ControlBenchmark(object):
          normalized = (benchmark - shift) / scale
         :param action_scale: scale to use to go between normalized and benchmark actions:
          normalized = (benchmark - shift) / scale
-        :param initial_states: list of states that the benchmark can be set to (uniformly at random) when reset
+        :param initial_states: either None (initial state will be sampled uniformly at random from the state space),
+        a list of states that the benchmark can be set to (uniformly at random) when reset,
+        or a callable that returns a state.
         :param sampling_time: seconds between subsequent control decisions and observations
         :param max_seconds: number of seconds before an episode terminates
         :param target_state: the desired state the system should be controlled towards
         :param target_action: the desired action
         :param state_penalty_weights: penalization scaling per state dimension
         :param action_penalty_weights: penalization scaling per action dimension
+        :param binary_reward_state_tolerance: tolerance per state component when using binary rewards
+        :param binary_reward_action_tolerance: tolerance per action component when using binary rewards
         :param domain_bound_handling: how to handle violations of the normalized state domain per state component
         :param reward_type: type of reward function to use"""
 
-        assert len(domain_bound_handling) == len(state_scale) == len(state_shift) == len(initial_states[0]) \
+        assert len(domain_bound_handling) == len(state_scale) == len(state_shift) \
             == len(state_penalty_weights), \
             'all state related quantities should have the same dimensions'
         assert len(action_shift) == len(action_scale) == len(action_penalty_weights) == len(target_action), \
@@ -73,6 +79,8 @@ class ControlBenchmark(object):
         self.state_action_penalty_weights = np.concatenate((state_penalty_weights, action_penalty_weights))
         assert self.target_state_action.shape == self.state_action_penalty_weights.shape
         self.reward_type = reward_type
+        self.binary_reward_state_action_tolerance = np.concatenate((binary_reward_state_tolerance,
+                                                                    binary_reward_action_tolerance))
         self.sampling_time = sampling_time  # in seconds
         self.max_seconds = max_seconds
         self.initial_states = initial_states  # in benchmark coordinates (not normalized)
@@ -99,7 +107,14 @@ class ControlBenchmark(object):
     def reset(self) -> np.ndarray:
         """Reset the environment to one of the initial states.
         :return the initial state after reset"""
-        self._state = random.choice(self.initial_states)
+        if self.initial_states is None:
+            #  randomly sample a state from the state space
+            self._state = self.denormalize_state(np.random.uniform(-1., 1., size=self.state_scale.size))
+        elif isinstance(self.initial_states, list):
+            self._state = random.choice(self.initial_states)
+        else:  # only other allowed alternative is a function that returns an initial state
+            assert callable(self.initial_states)
+            self._state = self.initial_states()
         self.step_counter = 0
         self._reset_log()
         return self.normalized_state
@@ -137,6 +152,10 @@ class ControlBenchmark(object):
         """Return an identifier that describes the benchmark for fair comparisons."""
         raise NotImplementedError('Should be implemented in the derived class '
                                   'as it is benchmark dependent')
+
+    @property
+    def action_shape(self):
+        return self.action_scale.shape
 
     def normalize_state(self, state: np.ndarray) -> np.ndarray:
         """ Normalize the state from the benchmark specific form to the domain of [-1, 1]^N.
@@ -180,6 +199,8 @@ class ControlBenchmark(object):
             return float(-1 * np.sum(difference * self.state_action_penalty_weights))
         elif self.reward_type == RewardType.QUADRATIC:
             return float(-1 * np.sum(difference ** 2 * self.state_action_penalty_weights))
+        elif self.reward_type == RewardType.BINARY:
+            return float(np.all(difference < self.binary_reward_state_action_tolerance))
         else:
             raise NotImplementedError(f'No implementation for {self.reward_type}')
 

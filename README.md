@@ -30,7 +30,7 @@ for episode in range(10):
     # will stay within this range.
 
     while not terminal:
-        action = np.random.uniform(low=-1., high=1., size=(4,))  # actions should also be normalized in 
+        action = np.random.uniform(-1, 1, size=env.action_shape)  # actions should also be normalized in 
         # the domain [-1, 1]  
         state, reward, terminal, _ = env.step(action)
 ```
@@ -89,3 +89,11 @@ env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.Rew
 ```
 See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
 
+### Robot navigation
+Drive a navigation robot to a target position and have it stand there facing the correct direction.
+
+```python
+import cor_control_benchmarks as cb
+env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
+```
+See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.

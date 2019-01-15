@@ -34,6 +34,8 @@ class MagmanBenchmark(ControlBenchmark):
             target_action=np.array([0. for _ in range(magnets)]),
             state_penalty_weights=np.array([1., 0.]),
             action_penalty_weights=np.array([1. for _ in range(magnets)]),
+            binary_reward_state_tolerance=np.array([0.01, 0.01]),
+            binary_reward_action_tolerance=np.array([1. for _ in range(magnets)]),
             domain_bound_handling=[DomainBound.STOP, DomainBound.IGNORE],
             #                       Ball position, ball velocity
             reward_type=reward_type,
