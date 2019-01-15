@@ -14,9 +14,7 @@ Installation / updating:
 
 `pip install --user --upgrade git+git://github.com/timdebruin/CoR-control-benchmarks`
 
-
-The file [example.py](example.py) contains examples of using these benchmarks and the helper code available. 
-Here the most basic usage (enough for trial based control) is shown:  
+Here the basic usage (enough for trial based control) is shown:  
 
 ```python
 import numpy as np
@@ -45,7 +43,7 @@ This repository contains the following benchmarks:
 import cor_control_benchmarks as cb
 env = cb.PendulumBenchmark(max_voltage=2.0, sampling_time=0.02, max_seconds=2.5, reward_type=cb.RewardType.QUADRATIC)
 ```
-See [benchmarks/pendulum.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters. 
+See [cor_control_benchmarks/pendulum.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters. 
 
 Swing up an under-actuated pendulum. 
 To solve the benchmark the pendulum will need to be swung to one side to build momentum before swinging in the opposite 
@@ -68,7 +66,7 @@ This benchmark has been used in (among others) the following papers:
 import cor_control_benchmarks as cb
 env = cb.MagmanBenchmark(magnets=4, sampling_time=0.02, max_seconds=2.5, reward_type=cb.RewardType.QUADRATIC)
 ```
-See [benchmarks/magman.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters.
+See [cor_control_benchmarks/magman.py](cor_control_benchmarks/magman.py) for the dynamics model and available parameters.
 
 Position a magnetic ball by controlling the current through several electromagnets positioned under a
 1-dimensional track that the ball rolls on.
@@ -89,5 +87,5 @@ quickly and stabilize.
 import cor_control_benchmarks as cb
 env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
 ```
-See [benchmarks/magman.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
+See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
 
