@@ -59,6 +59,7 @@ class PendulumBenchmark(ControlBenchmark):
 
         angle = x[0]
         angular_velocity = x[1]
+        motor_torque = x[2]
 
         inertia = 1.91e-4  # Pendulum inertia
         mass = 5.5e-2  # Pendulum mass
@@ -75,7 +76,7 @@ class PendulumBenchmark(ControlBenchmark):
         dx[1] = (
                         - mass * gravity_constant * length * np.sin(angle)
                         - (damping + torque_constant ** 2 / rotor_resistance) * angular_velocity
-                        + torque_constant / rotor_resistance * angular_velocity
+                        + torque_constant / rotor_resistance * motor_torque
                 ) / inertia
 
         return dx

@@ -17,7 +17,7 @@ Here the most basic usage (enough for trial based control) is shown:
 import numpy as np
 import cor_control_benchmarks as cb
 
-env = cb.magman.MagmanBenchmark(magnets=4)
+env = cb.MagmanBenchmark(magnets=4)
 
 for episode in range(10):
     terminal = False  # episodes terminate after a time limit or, for some benchmarks, 
@@ -38,7 +38,7 @@ This repository contains the following benchmarks:
 ### Pendulum swing-up
 ```python
 import cor_control_benchmarks as cb
-env = cb.pendulum.PendulumBenchmark(max_voltage=2.0, sampling_time=0.02, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.QUADRATIC)
+env = cb.PendulumBenchmark(max_voltage=2.0, sampling_time=0.02, max_seconds=2.5, reward_type=cb.RewardType.QUADRATIC)
 ```
 See [benchmarks/pendulum.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters. 
 
@@ -61,7 +61,7 @@ This benchmark has been used in (among others) the following papers:
 ### Magnetic manipulator
 ```python
 import cor_control_benchmarks as cb
-env = cb.magman.MagmanBenchmark(magnets=4, sampling_time=0.02, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.QUADRATIC)
+env = cb.MagmanBenchmark(magnets=4, sampling_time=0.02, max_seconds=2.5, reward_type=cb.RewardType.QUADRATIC)
 ```
 See [benchmarks/magman.py](cor_control_benchmarks/pendulum.py) for the dynamics model and available parameters.
 
@@ -82,7 +82,7 @@ quickly and stabilize.
 
 ```python
 import cor_control_benchmarks as cb
-env = cb.segway.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.control_benchmark.RewardType.ABSOLUTE)
+env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
 ```
 See [benchmarks/magman.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
 
