@@ -67,7 +67,7 @@ class MagmanBenchmark(ControlBenchmark):
         magnetic_force = 0
         for magnet_index in range(self.magnets):
             squared_current = x[2 + magnet_index]
-            magnet_position = (magnet_index+1) * 0.025  # magnets are 25 mm apart, starting fom pos x[0]=-0.025
+            magnet_position = (magnet_index+1) * 0.025  # magnets are 25 mm apart, starting fom pos x[0]=0.025
             magnetic_force += (
                     squared_current * (-alpha * (ball_position - magnet_position)) /
                     ((((ball_position - magnet_position) ** 2) + beta) ** 3)
