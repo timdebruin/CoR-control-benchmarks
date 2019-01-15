@@ -52,7 +52,7 @@ DCSC / CoR lab.
 
 This benchmark has been used in (possibly among others) the following papers:
 
-- Reinforcement Learning with Symbolic Input-Output Models, *Derner et. al*, 2018 ([paper](https://ieeexplore.ieee.org/abstract/document/8593881), [bibtex](doc/bib/derner2018reinforcement))
+- Reinforcement Learning with Symbolic Input-Output Models, *Derner et. al*, 2018 ([paper](https://ieeexplore.ieee.org/abstract/document/8593881), [bibtex](doc/bib/derner2018reinforcement.md))
 - 
 
 ### Magnetic manipulator
