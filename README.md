@@ -4,7 +4,7 @@ These benchmarks require precise control strategies.
 The aim for each is to drive the state of a dynamical system to a reference state. 
 Some of these benchmarks (pendulum swing-up, magman) have physical counterparts within the Delft University of Technology.
 
-This readme contains instructions for using the benchmarks, and references to papers that have used these benchmarks. 
+This readme contains instructions for using this library and references to papers that have used these benchmarks. 
 
 - [Installation and basic usage](#installation-and-basic-usage)
 - [Benchmarks and papers that used these benchmarks](#benchmarks-and-papers-that-used-these-benchmarks)
@@ -21,7 +21,8 @@ Installation / updating:
 
 `pip install --user --upgrade git+git://github.com/timdebruin/CoR-control-benchmarks`
 
-Here the basic usage (enough for trial based control) is shown:  
+Here the basic usage of the library is shown. More features like logging and plotting results and
+using the benchmarks without normalization are shown [later](#advanced-examples).  
 
 ```python
 import numpy as np
@@ -107,11 +108,11 @@ See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the
 
 
 ## Advanced examples
-This section contains (slightly more) advanced examples.
+This section contains (slightly more) advanced usage examples.
 
 ### Logging and plotting results
-Some basic logging and plotting functions come with the library. To use this, we make a `Diagnostics` object, giving it the
-benchmark instance for which we want to log and the amount of information that should be stored. The options are:
+Some basic logging and plotting functions come with the library. To use these, make a `Diagnostics` object, giving it the
+benchmark instance for which we want to log the trajectories and the amount of information that should be stored. The logging options are:
 ```python
 import cor_control_benchmarks as cb
 log = cb.LogType.REWARD_SUM  # only store the sum of rewards for every episode
@@ -144,9 +145,9 @@ diagnostics.plot_trajectories(state=True, action=True, rewards=True, episode=3) 
 ### Using a state-value function for control
 Assume we have a function that tells us for a given state (in the non normalized state domain) the state-value. To use this for control we can tell the benchmarks not to use normalization. 
 
-To select the (approximately) best action from a state we can reset the environment to that state and see what state we end up in for the actions we consider.
+To select the (approximately) best action from a state we can repeatedly reset the environment to that specific state and see what state we end up in for the actions we consider.
 
-To still use the logging functions described above we can make two instances of the benchmark: one to test the states and one that we actually perform the rollouts on.
+To still use the logging functions described above we can make two instances of the benchmark: the one we keep resetting (which would interfere with logging) and one that we actually perform the rollouts on.
 
 ````python
 import cor_control_benchmarks as cb
