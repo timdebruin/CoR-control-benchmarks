@@ -31,6 +31,7 @@ class ControlBenchmark(object):
     """
 
     def __init__(self,
+                 state_names: List[str], action_names: List[str],
                  state_shift: np.ndarray, state_scale: np.ndarray,
                  action_shift: np.ndarray, action_scale: np.ndarray,
                  initial_states: Optional[Union[List[np.ndarray], Callable]],
@@ -73,13 +74,17 @@ class ControlBenchmark(object):
         :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific
         domain and require actions in the benchmark specific domain.
         """
+        self.state_names = state_names
+        self.action_names = action_names
         self.do_not_normalize = do_not_normalize
         assert len(domain_bound_handling) == len(state_scale) == len(state_shift) \
-            == len(state_penalty_weights), \
+               == len(state_penalty_weights), \
             'all state related quantities should have the same dimensions'
         assert len(action_shift) == len(action_scale) == len(action_penalty_weights) == len(target_action), \
             'all action related quantities should have the same dimensions'
 
+        self.target_state = target_state
+        self.target_action = target_action
         self.target_state_action = np.concatenate((target_state, target_action))
         self.state_action_penalty_weights = np.concatenate((state_penalty_weights, action_penalty_weights))
         assert self.target_state_action.shape == self.state_action_penalty_weights.shape
@@ -172,6 +177,24 @@ class ControlBenchmark(object):
     @property
     def action_shape(self):
         return self.action_scale.shape
+
+    @property
+    def state_shape(self):
+        return self.state_scale.shape
+
+    @property
+    def not_normalized_state_domain(self):
+        return {
+            'min': self.denormalize_state(-1 * np.ones(self.state_shape)),
+            'max': self.denormalize_state(np.ones(self.state_shape)),
+        }
+
+    @property
+    def not_normalized_action_domain(self):
+        return {
+            'min': self.denormalize_action(-1 * np.ones(self.action_shape)),
+            'max': self.denormalize_action(np.ones(self.action_shape)),
+        }
 
     def normalize_state(self, state: np.ndarray) -> np.ndarray:
         """ Normalize the state from the benchmark specific form to the domain of [-1, 1]^N.
@@ -311,4 +334,4 @@ class ControlBenchmark(object):
     def _step_log_post(self, reward: float, terminal: bool) -> None:
         """ Logs the reward and logs sequence based on terminal and reward sum (after dynamics function is called)."""
         for logger in self.loggers:
-            logger.step_log_post(reward, terminal)
+            logger.step_log_post(self.true_state, reward, terminal)

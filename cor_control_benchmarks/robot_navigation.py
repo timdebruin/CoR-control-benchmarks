@@ -9,7 +9,7 @@ class RobotNavigationBenchmark(ControlBenchmark):
                  max_seconds: float = 20,
                  reward_type: RewardType = RewardType.BINARY,
                  do_not_normalize: bool = False
-                 ):
+                 ) -> None:
         """ Create an instance of the robot navigation benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
@@ -18,6 +18,8 @@ class RobotNavigationBenchmark(ControlBenchmark):
         domain and require actions in the benchmark specific domain. 
         """
         super().__init__(
+            state_names=['x location [m]', 'y location [m]', 'heading [rad]'],
+            action_names=['forward velocity [m/s]', 'angular velocity [rad/s]'],
             state_shift=np.array([0.5, 0.5, 0.]),
             state_scale=np.array([0.5, 0.5, np.pi]),
             action_shift=np.array([0.1, 0.]),
@@ -45,7 +47,7 @@ class RobotNavigationBenchmark(ControlBenchmark):
     @property
     def name(self) -> str:
         """Return an identifier that describes the benchmark for fair comparisons."""
-        return f'robot_navigator_v0-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
+        return f'Robot navigator (v0, ts: {self.sampling_time} s, duration: {self.max_seconds} s. {self.reward_type})'
 
     def _eom(self, state_action: np.ndarray):
         """Equations of motion for robot navigator.

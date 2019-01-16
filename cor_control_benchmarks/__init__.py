@@ -5,5 +5,7 @@ from cor_control_benchmarks.robot_navigation import RobotNavigationBenchmark
 
 from cor_control_benchmarks.control_benchmark import RewardType, DomainBound
 
+from cor_control_benchmarks.result_logging.result_diagnostics import Diagnostics, LogType
+
 name = "cor_control_benchmarks"
 __all__ = ["control_benchmark", "magman", "segway", "pendulum", "robot_navigation", "result_logging"]

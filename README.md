@@ -2,14 +2,21 @@
 This repository contains python (3.6+) implementations of several control benchmarks. 
 These benchmarks require precise control strategies. 
 The aim for each is to drive the state of a dynamical system to a reference state. 
-Some of these benchmarks (pendulum swingup, magman) have physical counterparts within the Delft University of Technology.
-
-This repository (will) contain(s) both these benchmarks as well as several implementations of algorithms that solve these tasks.
- 
+Some of these benchmarks (pendulum swing-up, magman) have physical counterparts within the Delft University of Technology.
 
 This readme contains instructions for using the benchmarks, and references to papers that have used these benchmarks. 
 
-## Usage
+- [Installation and basic usage](#installation-and-basic-usage)
+- [Benchmarks and papers that used these benchmarks](#benchmarks-and-papers-that-used-these-benchmarks)
+    - [Pendulum swing-up](#pendulum-swing-up)
+    - [Magnetic manipulator](#magnetic-manipulator)
+    - [Segway](#segway)
+    - [Robot navigation](#robot-navigation)
+- [Slightly more advanced examples](#advanced-examples)
+    - [Logging and plotting results](#logging-and-plotting-results)
+    - [Using a state-value function for control](#using-a-state-value-function-for-control)
+
+## Installation and basic usage
 Installation / updating:
 
 `pip install --user --upgrade git+git://github.com/timdebruin/CoR-control-benchmarks`
@@ -97,3 +104,77 @@ import cor_control_benchmarks as cb
 env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
 ```
 See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
+
+
+## Advanced examples
+This section contains (slightly more) advanced examples.
+
+### Logging and plotting results
+Some basic logging and plotting functions come with the library. To use this, we make a `Diagnostics` object, giving it the
+benchmark instance for which we want to log and the amount of information that should be stored. The options are:
+```python
+import cor_control_benchmarks as cb
+log = cb.LogType.REWARD_SUM  # only store the sum of rewards for every episode
+log = cb.LogType.BEST_AND_LAST_TRAJECTORIES  # store the states, actions and rewards at every time step of both the most recent and the best episode, as well as the sum of rewards for every episode 
+log = cb.LogType.ALL_TRAJECTORIES  #  # store the states, actions and rewards at every time step of every episode
+```
+Based on what is logged, different plots are available:
+```python
+import cor_control_benchmarks as cb
+import numpy as np
+
+env = cb.PendulumBenchmark(max_voltage=3.)
+diagnostics = cb.Diagnostics(benchmark=env, log=cb.LogType.ALL_TRAJECTORIES)
+
+for episode in range(10):
+    terminal = False  
+    state = env.reset()  
+
+    while not terminal:
+        action = np.random.uniform(-1, 1, size=env.action_shape)  
+        state, reward, terminal, _ = env.step(action)
+    diagnostics.print_summary() # print to the terminal the number of episodes that have passed, the best reward sum so far and the most recent reward sum (works with all log types)
+
+diagnostics.plot_reward_sum_per_episode() # Give a plot of the learning curve (works with all log types)
+diagnostics.plot_most_recent_trajectory(state=True, action=True, rewards=True) # plot the states, actions and/or reward trajectories during the most recent episode (works with LogType.BEST_AND_LAST_TRAJECTORIES and LogType.ALL_TRAJECTORIES)
+diagnostics.plot_best_trajectory(state=True, action=True, rewards=True) # plot the states, actions and/or reward trajectories during the episode with the highest reward sum so far (works with LogType.BEST_AND_LAST_TRAJECTORIES and LogType.ALL_TRAJECTORIES)
+diagnostics.plot_trajectories(state=True, action=True, rewards=True, episode=3) # plot the states, actions and/or reward trajectories during a specific episode (works only with LogType.ALL_TRAJECTORIES)
+```
+
+### Using a state-value function for control
+Assume we have a function that tells us for a given state (in the non normalized state domain) the state-value. To use this for control we can tell the benchmarks not to use normalization. 
+
+To select the (approximately) best action from a state we can reset the environment to that state and see what state we end up in for the actions we consider.
+
+To still use the logging functions described above we can make two instances of the benchmark: one to test the states and one that we actually perform the rollouts on.
+
+````python
+import cor_control_benchmarks as cb
+
+rollout_pendulum = cb.PendulumBenchmark(max_voltage=2., do_not_normalize=True)
+dynamics_check_pendulum = cb.PendulumBenchmark(max_voltage=2., do_not_normalize=True)
+
+diagnostics = cb.Diagnostics(benchmark=rollout_pendulum, log=cb.LogType.BEST_AND_LAST_TRAJECTORIES)
+
+def next_state_from(initial_state, action):
+    dynamics_check_pendulum.reset_to_specific_state(initial_state)
+    next_state, _, _, _, = dynamics_check_pendulum.step(action)
+    return next_state
+
+state = rollout_pendulum.reset()
+terminal = False
+reward_sum = 0
+while terminal is not True:
+    best_value, best_action = -1e6, 0.
+    for action_to_consider in [-2., -1., 0., 1., 2.]:
+        v = state_value_function(next_state_from(state, action_to_consider))
+        if v > best_value:
+            best_value = v
+            best_action = action_to_consider
+
+    state, _, _, _ = rollout_pendulum.step(best_action)
+   
+diagnostics.plot_most_recent_trajectory(state=True, action=True, rewards=True)
+````
+ 
+   

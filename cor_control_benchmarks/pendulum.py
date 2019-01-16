@@ -15,7 +15,7 @@ class PendulumBenchmark(ControlBenchmark):
                  reward_type: RewardType = RewardType.QUADRATIC,
                  max_voltage: float = 2.,
                  do_not_normalize: bool = False,
-                 ):
+                 ) -> None:
         """ Create an instance of the pendulum benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
@@ -26,6 +26,8 @@ class PendulumBenchmark(ControlBenchmark):
         """
 
         super().__init__(
+            state_names=['pendulum angle [rad]', 'angular velocity [rad/s]'],
+            action_names=['motor voltage [V]'],
             state_shift=np.array([0., 0.]),
             state_scale=np.array([np.pi, 30]),  # states in  [-pi, pi], [-30, 30]
             action_shift=np.array([0.]),
@@ -55,8 +57,9 @@ class PendulumBenchmark(ControlBenchmark):
     @property
     def name(self) -> str:
         """Return an identifier that describes the benchmark for fair comparisons."""
-        return f'pendulum_swingup_v0-' \
-            f'max_voltage_{self.action_scale[0]}-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
+        return f'pendulum swingup (v0, ' \
+            f'max voltage: {self.action_scale[0]}, st: {self.sampling_time} s, duration: {self.max_seconds} s,  ' \
+            f'{self.reward_type})'
 
     def _eom(self, state_action: np.ndarray):
         """Equations of motion for DCSC/CoR inverted pendulum setup.

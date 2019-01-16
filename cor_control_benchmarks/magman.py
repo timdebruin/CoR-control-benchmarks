@@ -25,6 +25,8 @@ class MagmanBenchmark(ControlBenchmark):
         :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific
         domain and require actions in the benchmark specific domain."""
         super().__init__(
+            state_names=['ball position [m]', ['ball velocity [m/s]']],
+            action_names=[f'squared current magnet {i+1}' for i in range(magnets)],
             state_shift=np.array([0.035, 0.]),
             state_scale=np.array([0.07, 0.4]),
             action_shift=np.array([0.3 for _ in range(magnets)]),
@@ -50,7 +52,8 @@ class MagmanBenchmark(ControlBenchmark):
     @property
     def name(self) -> str:
         """Return an identifier that describes the benchmark for fair comparisons."""
-        return f'magman-magnets_{self.magnets}-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
+        return f'Magman (v0, magnets: {self.magnets}, st: {self.sampling_time}, duration: {self.max_seconds} s, ' \
+            f'{self.reward_type})'
 
     def _eom(self, state_action: np.ndarray):
         """Equations of motion for the DCSC/CoR magman setup.

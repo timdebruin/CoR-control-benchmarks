@@ -10,7 +10,7 @@ class SegwayBenchmark(ControlBenchmark):
                  max_seconds: float = 2.5,
                  reward_type: RewardType = RewardType.ABSOLUTE,
                  do_not_normalize: bool = False,
-                 ):
+                 ) -> None:
         """ Create an instance of the segway benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
@@ -19,6 +19,8 @@ class SegwayBenchmark(ControlBenchmark):
         domain and require actions in the benchmark specific domain. 
         """
         super().__init__(
+            state_names=['Body angle [rad]', 'Body angular velocity [rad/s]', 'wheel velocity [rad/s]'],
+            action_names=['motor torque [Nm]'],
             state_shift=np.array([0., 0., 0.]),
             state_scale=np.array([3 * np.pi / 5, 12, 180]),
             action_shift=np.array([0.]),
@@ -43,7 +45,7 @@ class SegwayBenchmark(ControlBenchmark):
 
     @property
     def name(self) -> str:
-        return f'segway-ts_{self.sampling_time}-ms_{self.max_seconds}-rt_{self.reward_type}'
+        return f'Segway (v0, st: {self.sampling_time} s, duration: {self.max_seconds} s, {self.reward_type})'
 
     def _eom(self, state_action: np.ndarray):
         """Equations of motion of a segway model.
