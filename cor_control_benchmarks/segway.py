@@ -8,11 +8,16 @@ class SegwayBenchmark(ControlBenchmark):
     def __init__(self,
                  sampling_time: float = 0.01,
                  max_seconds: float = 2.5,
-                 reward_type: RewardType = RewardType.ABSOLUTE):
+                 reward_type: RewardType = RewardType.ABSOLUTE,
+                 do_not_normalize: bool = False,
+                 ):
         """ Create an instance of the segway benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
-        :param reward_type: the type of reward function to use. """
+        :param reward_type: the type of reward function to use. 
+        :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific 
+        domain and require actions in the benchmark specific domain. 
+        """
         super().__init__(
             state_shift=np.array([0., 0., 0.]),
             state_scale=np.array([3 * np.pi / 5, 12, 180]),
@@ -28,9 +33,12 @@ class SegwayBenchmark(ControlBenchmark):
             target_action=np.array([0.]),
             state_penalty_weights=np.array([1., 0., 0.]),
             action_penalty_weights=np.array([0.]),
+            binary_reward_state_tolerance=np.array([0.02, 1e6, 1e6]),
+            binary_reward_action_tolerance=np.array([25.]),
             domain_bound_handling=[DomainBound.STOP, DomainBound.IGNORE, DomainBound.IGNORE],
             # 'Body angle', 'Body velocity', 'Wheel velocity'
             reward_type=reward_type,
+            do_not_normalize=do_not_normalize,
         )
 
     @property
@@ -77,13 +85,13 @@ class SegwayBenchmark(ControlBenchmark):
                                 motor_torque
                                 + friction_axle * body_angular_velocity
                                 + half_length_link * mass_link * radius_wheel * np.sin(body_angle) *
-                                    body_angular_velocity ** 2.
+                                body_angular_velocity ** 2.
                                 - (friction_rolling + friction_axle) * wheel_velocity
                         )
                 ) / (
                         - (inertia_link + half_length_link ** 2 * mass_link) *
                         (
-                            inertia_wheel + (mass_wheel + mass_link) * radius_wheel ** 2
+                                inertia_wheel + (mass_wheel + mass_link) * radius_wheel ** 2
                         )
                         + half_length_link ** 2 * mass_link ** 2 * radius_wheel ** 2 * np.cos(body_angle) ** 2
                 )
@@ -93,24 +101,25 @@ class SegwayBenchmark(ControlBenchmark):
         dx[2] = (
                 (
                         -gravity_constant * half_length_link ** 2 * mass_link ** 2 * radius_wheel * np.cos(body_angle) *
-                            np.sin(body_angle) + half_length_link * mass_link *
-                            (inertia_link + half_length_link ** 2 * mass_link) * radius_wheel * np.sin(body_angle) *
-                            body_angular_velocity ** 2
+                        np.sin(body_angle) + half_length_link * mass_link *
+                        (inertia_link + half_length_link ** 2 * mass_link) * radius_wheel * np.sin(body_angle) *
+                        body_angular_velocity ** 2
                         + half_length_link * mass_link * radius_wheel * np.cos(body_angle) *
-                            (motor_torque + friction_axle * body_angular_velocity - friction_axle * wheel_velocity)
+                        (motor_torque + friction_axle * body_angular_velocity - friction_axle * wheel_velocity)
                         + (inertia_link + half_length_link ** 2 * mass_link) *
-                            (motor_torque + friction_axle * body_angular_velocity
-                             - (friction_rolling + friction_axle) * wheel_velocity
-                            )
+                        (
+                                motor_torque + friction_axle * body_angular_velocity
+                                - (friction_rolling + friction_axle) * wheel_velocity
+                        )
                 ) /
                 (
                         (inertia_link + half_length_link ** 2 * mass_link) *
-                            (
-                                    inertia_wheel
-                                    + (mass_wheel + mass_link) * radius_wheel ** 2
-                            )
-                            - half_length_link ** 2 * mass_link ** 2 * radius_wheel ** 2 *
-                                np.cos(body_angle) ** 2
+                        (
+                                inertia_wheel
+                                + (mass_wheel + mass_link) * radius_wheel ** 2
+                        )
+                        - half_length_link ** 2 * mass_link ** 2 * radius_wheel ** 2 *
+                        np.cos(body_angle) ** 2
                 )
         )
 

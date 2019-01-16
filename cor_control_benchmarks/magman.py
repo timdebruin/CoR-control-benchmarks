@@ -13,13 +13,17 @@ class MagmanBenchmark(ControlBenchmark):
                  sampling_time: float = 0.02,
                  max_seconds: float = 2.5,
                  reward_type: RewardType = RewardType.QUADRATIC,
-                 magnets: int = 4):
+                 magnets: int = 4,
+                 do_not_normalize: bool = False,
+                 ) -> None:
         """ Create an instance of the pendulum benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
         :param reward_type: the type of reward function to use.
         :param magnets: the number of magnets (action dimensionality). [1 - 4] note that for one magnet the problem
-        changes significantly (becomes harder) as a ballistic trajectory needs to be learned"""
+        changes significantly (becomes harder) as a ballistic trajectory needs to be learned
+        :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific
+        domain and require actions in the benchmark specific domain."""
         super().__init__(
             state_shift=np.array([0.035, 0.]),
             state_scale=np.array([0.07, 0.4]),
@@ -39,6 +43,7 @@ class MagmanBenchmark(ControlBenchmark):
             domain_bound_handling=[DomainBound.STOP, DomainBound.IGNORE],
             #                       Ball position, ball velocity
             reward_type=reward_type,
+            do_not_normalize=do_not_normalize,
         )
         self.magnets = magnets
 
@@ -69,7 +74,7 @@ class MagmanBenchmark(ControlBenchmark):
         magnetic_force = 0
         for magnet_index in range(self.magnets):
             squared_current = x[2 + magnet_index]
-            magnet_position = (magnet_index+1) * 0.025  # magnets are 25 mm apart, starting fom pos x[0]=0.025
+            magnet_position = (magnet_index + 1) * 0.025  # magnets are 25 mm apart, starting fom pos x[0]=0.025
             magnetic_force += (
                     squared_current * (-alpha * (ball_position - magnet_position)) /
                     ((((ball_position - magnet_position) ** 2) + beta) ** 3)

@@ -43,7 +43,9 @@ class ControlBenchmark(object):
                  binary_reward_state_tolerance: np.ndarray,
                  binary_reward_action_tolerance: np.ndarray,
                  domain_bound_handling: List[DomainBound],
-                 reward_type: RewardType) -> None:
+                 reward_type: RewardType,
+                 do_not_normalize: bool
+                 ) -> None:
         """Initialization function of the control benchmark base class.
         Should be called from the init functions of the actual cor_control_benchmarks.
 
@@ -67,8 +69,11 @@ class ControlBenchmark(object):
         :param binary_reward_state_tolerance: tolerance per state component when using binary rewards
         :param binary_reward_action_tolerance: tolerance per action component when using binary rewards
         :param domain_bound_handling: how to handle violations of the normalized state domain per state component
-        :param reward_type: type of reward function to use"""
-
+        :param reward_type: type of reward function to use
+        :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific
+        domain and require actions in the benchmark specific domain.
+        """
+        self.do_not_normalize = do_not_normalize
         assert len(domain_bound_handling) == len(state_scale) == len(state_shift) \
             == len(state_penalty_weights), \
             'all state related quantities should have the same dimensions'
@@ -117,23 +122,34 @@ class ControlBenchmark(object):
             self._state = self.initial_states()
         self.step_counter = 0
         self._reset_log()
-        return self.normalized_state
+        return self.state
 
-    def reset_to_specific_state(self, true_state: np.ndarray):
-        """ Reset the environment to a specific state in the benchmark domain (non normalized).
-        :param true_state: state to reset to, in benchmark coordinates
-        :return: the normalized state"""
-        self._state = true_state
+    def reset_to_specific_state(self, state: np.ndarray) -> np.ndarray:
+        """ Reset the environment to a specific state. If the environment is used with normalized states and actions (
+        the default) the given state should be in normalized coordinates. If the environment is used without
+        normalization (by passing do_not_normalize=True to the benchmark during initialization) the given
+        state should not be normalized.
+
+        :param state: state to reset to
+        :return: the state (normalized if the benchmark is used with normalization, and benchmark
+        specific otherwise)."""
+
+        self._state = state if self.do_not_normalize else self.denormalize_state(state)
+
         self.step_counter = 0
-        return self.normalized_state
+        return self.state
 
     def step(self, action: Union[np.ndarray]) -> Tuple[np.ndarray, float, bool, Any]:
-        """ Take a step from the current state using the specified action. Action is assumed to be in [-1,1].
+        """ Take a step from the current state using the specified action. Action is assumed to be in [-1,1] unless
+        the environment was created with do_not_normalize = True.
         :param action: The action to take in the current state for sample_time seconds
-        :return: A tuple with (next_normalized_state, reward, terminal, additional_info)"""
-
-        action = np.array(action)
-        assert -1 <= action.all() <= 1, 'Actions should be normalized between -1 and 1'
+        :return: A tuple with (next_state, reward, terminal, additional_info)"""
+        if self.do_not_normalize:
+            action = self.normalize_action(np.array(action))
+            assert -1 <= action.all() <= 1, 'Action was out of the allowed range'
+        else:
+            action = np.array(action)
+            assert -1 <= action.all() <= 1, 'Actions should be normalized between -1 and 1'
         self._u = self.denormalize_action(action)
 
         self._step_log_pre()
@@ -145,7 +161,7 @@ class ControlBenchmark(object):
 
         self._step_log_post(reward, terminal)
 
-        return self.normalized_state, reward, terminal, None
+        return self.state, reward, terminal, None
 
     @property
     def name(self) -> str:
@@ -180,6 +196,11 @@ class ControlBenchmark(object):
         :param : state in normalized form ( in [-1, 1]^N )
         :return: the action in the de-normalized form"""
         return self._norm_or_de_norm(state, self.state_shift, self.state_scale, de_norm=True)
+
+    @property
+    def state(self) -> np.ndarray:
+        """Return either the normalized state or the true state, depending on whether normalization is used"""
+        return self.true_state if self.do_not_normalize else self.normalized_state
 
     @property
     def normalized_state(self) -> np.ndarray:

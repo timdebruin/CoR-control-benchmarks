@@ -8,11 +8,15 @@ class RobotNavigationBenchmark(ControlBenchmark):
                  sampling_time: float = 0.2,
                  max_seconds: float = 20,
                  reward_type: RewardType = RewardType.BINARY,
+                 do_not_normalize: bool = False
                  ):
         """ Create an instance of the robot navigation benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
         :param max_seconds: number of seconds per episode
-        :param reward_type: the type of reward function to use."""
+        :param reward_type: the type of reward function to use.
+        :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific 
+        domain and require actions in the benchmark specific domain. 
+        """
         super().__init__(
             state_shift=np.array([0.5, 0.5, 0.]),
             state_scale=np.array([0.5, 0.5, np.pi]),
@@ -29,6 +33,7 @@ class RobotNavigationBenchmark(ControlBenchmark):
             binary_reward_action_tolerance=np.array([10., 10.]),
             domain_bound_handling=[DomainBound.IGNORE, DomainBound.IGNORE, DomainBound.WRAP],  # [x, y, phi]
             reward_type=reward_type,
+            do_not_normalize=do_not_normalize,
         )
 
     @property
