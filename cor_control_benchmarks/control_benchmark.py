@@ -295,7 +295,7 @@ class ControlBenchmark(object):
                     corrected_state = self.normalized_state
                     # assuming violations are small, but if they are not there is some issue with the
                     # state bounds, sampling frequency or action magnitude
-                    corrected_state[state_index] = normalized_state_component - 1 * np.sign(normalized_state_component)
+                    corrected_state[state_index] = normalized_state_component - 2 * np.sign(normalized_state_component)
                     self._state = self.denormalize_state(corrected_state)
                     return self._state_bounds_check()
                 elif handling == DomainBound.TERMINATE:

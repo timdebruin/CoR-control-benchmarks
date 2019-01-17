@@ -11,7 +11,7 @@ class MagmanBenchmark(ControlBenchmark):
 
     def __init__(self,
                  sampling_time: float = 0.02,
-                 max_seconds: float = 2.5,
+                 max_seconds: float = 3.,
                  reward_type: RewardType = RewardType.QUADRATIC,
                  magnets: int = 4,
                  do_not_normalize: bool = False,

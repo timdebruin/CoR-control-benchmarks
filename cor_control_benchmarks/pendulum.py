@@ -11,7 +11,7 @@ class PendulumBenchmark(ControlBenchmark):
 
     def __init__(self,
                  sampling_time: float = 0.02,
-                 max_seconds: float = 2.5,
+                 max_seconds: float = 5.,
                  reward_type: RewardType = RewardType.QUADRATIC,
                  max_voltage: float = 2.,
                  do_not_normalize: bool = False,
