@@ -62,12 +62,17 @@ class TrajectoryLogger(object):
         if self.log == LogType.REWARD_SUM:
             raise ValueError('Trajectory information not stored when using LogType.REWARD_SUM')
         if self.log == LogType.BEST_AND_LAST_TRAJECTORIES:
-            if index == max(self.reward_sum_per_episode, default=-99):
+            try:
+                best = np.argmax(self.reward_sum_per_episode)
+            except ValueError:
+                best = -1
+            if index == best:
                 return self.best_trajectory
-            elif index == -1 or index == len(self.reward_sum_per_episode) -1:
+            elif index == -1 or index == len(self.reward_sum_per_episode) - 1:
                 return self.last_trajectory
             else:
-                raise ValueError(f'Requested trajectory {index}  was neither the best nor last. When using '
+                raise ValueError(f'Requested trajectory {index}  was neither the best ({best}) nor last '
+                                 f'({len(self.reward_sum_per_episode)}). When using '
                                  f'LogType.BEST_AND_LAST_TRAJECTORIES no other trajectories are stored.')
         else:
             return self.episode_trajectories[index]
