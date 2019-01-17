@@ -63,8 +63,9 @@ DCSC / CoR lab.
 **Related works**
 This benchmark has been used in (among others) the following papers:
 
-- Erik Derner, Jiří Kubalík and Robert Babuška, *"Reinforcement Learning with Symbolic Input-Output Models."*, Conference on Intelligent Robots and Systems (IROS), 2018. [[paper](https://ieeexplore.ieee.org/abstract/document/8593881), [bibtex](doc/bib/derner2018reinforcement.bib)]
+- Eduard Alibekov, Jiří Kubalík and Robert Babuška, *"Policy derivation methods for critic-only reinforcement learning in continuous spaces"*, Engineering Applications of Artificial Intelligence (EAAI), 2018 [[paper](https://www.sciencedirect.com/science/article/pii/S0952197617302993), [bibtex](doc/bib/alibekov18-eaai.bib)]
 - Tim de Bruin, Jens Kober, Karl Tuyls and Robert Babuška, *"Experience selection in deep reinforcement learning for control"*, Journal of Machine Learning Research (JMLR), 2018 [[paper](http://jmlr.org/papers/v19/17-131.html), [bibtex](doc/bib/debruin2018jmlr.bib)]
+- Erik Derner, Jiří Kubalík and Robert Babuška, *"Reinforcement Learning with Symbolic Input-Output Models."*, Conference on Intelligent Robots and Systems (IROS), 2018. [[paper](https://ieeexplore.ieee.org/abstract/document/8593881), [bibtex](doc/bib/derner2018reinforcement.bib)]
 - Erik Derner, Jiří Kubalík and Robert Babuška, *"Data-driven Construction of Symbolic Process Models for Reinforcement Learning"*, Conference on Robotics and Automation (ICRA), 2018 [[paper](https://ieeexplore.ieee.org/abstract/document/8461182), [bibtex](doc/bib/derner18icra.bib)]
 - Olivier Sprangers, Robert Babuška, Subramanya P. Nageshrao, and Gabriel A. D. Lopes, *"Reinforcement Learning for Port-Hamiltonian Systems"*, IEEE Transactions on Cybernetics, 2015 [[paper](https://ieeexplore.ieee.org/document/6883207), [bibtex](doc/bib/olivier15.bib)]
 - Ivo Grondman, Maarten Vaandrager, Lucian Busoniu, Robert Babuška and Erik Schuitema, *"Efficient Model Learning Methods for Actor–Critic Control"*,  Transactions on Systems, Man, and Cybernetics, 2012 [[paper](https://ieeexplore.ieee.org/abstract/document/6096441), [bibtex](doc/bib/grondman12smc.bib)]
@@ -85,6 +86,7 @@ DCSC / CoR lab.
 **Related works**
 This benchmark has been used in (among others) the following papers:
 - Tim de Bruin, Jens Kober, Karl Tuyls and Robert Babuška, *"Experience selection in deep reinforcement learning for control"*, Journal of Machine Learning Research (JMLR), 2018 [[paper](http://jmlr.org/papers/v19/17-131.html), [bibtex](doc/bib/debruin2018jmlr.bib)]
+- Eduard Alibekov, Jiří Kubalík and Robert Babuška, *"Policy derivation methods for critic-only reinforcement learning in continuous spaces"*, Engineering Applications of Artificial Intelligence (EAAI), 2018 [[paper](https://www.sciencedirect.com/science/article/pii/S0952197617302993), [bibtex](doc/bib/alibekov18-eaai.bib)]
 - Jan-Willem Damsteeg, Subramanya P. Nageshrao, and Robert Babuška, *"Model-based real-time control of a magnetic manipulator system"*, Conference on Decision and Control (CDC), 2017 [[paper](https://ieeexplore.ieee.org/document/8264140), [bibtex](doc/bib/damsteeg17.bib)]
 
 ### Segway
