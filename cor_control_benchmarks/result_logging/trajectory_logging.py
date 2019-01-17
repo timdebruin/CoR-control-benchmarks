@@ -1,3 +1,4 @@
+import warnings
 from enum import IntEnum
 from typing import List, NamedTuple, Optional
 import numpy as np
@@ -30,8 +31,8 @@ class TrajectoryLogger(object):
     def reset_log(self) -> None:
         """Called when the environment has been reset."""
         if len(self._current_trajectory.rewards) > 0:
-            raise Warning('Episode is reset before the end of the episode was reached, TrajectoryLogger will'
-                          'ignore this episode')
+            warnings.warn('Episode is reset before the end of the episode was reached, TrajectoryLogger will'
+                          'ignore this episode', UserWarning)
 
     def step_log_pre(self, state: np.ndarray, action: np.ndarray) -> None:
         """ Called during step with the current state and chosen action before dynamics function is called."""

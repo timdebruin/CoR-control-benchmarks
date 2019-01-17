@@ -86,7 +86,7 @@ class Diagnostics(object):
             assert trajectory_index is not None, 'trajectory index should be given when plotting a specific trajectory'
             t = self.logger.get_trajectory(trajectory_index)
             if t is None:
-                warnings.warn('Trying to plot the best episode before any episode has finished')
+                warnings.warn('Trying to plot the best episode before any episode has finished', UserWarning)
                 return
             if name == 'state':
                 trajectory = np.array(t.states)
