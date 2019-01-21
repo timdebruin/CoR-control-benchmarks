@@ -78,7 +78,7 @@ class ControlBenchmark(object):
         self.action_names = action_names
         self.do_not_normalize = do_not_normalize
         assert len(domain_bound_handling) == len(state_scale) == len(state_shift) \
-               == len(state_penalty_weights), \
+            == len(state_penalty_weights), \
             'all state related quantities should have the same dimensions'
         assert len(action_shift) == len(action_scale) == len(action_penalty_weights) == len(target_action), \
             'all action related quantities should have the same dimensions'
@@ -239,6 +239,20 @@ class ControlBenchmark(object):
     def reward(self) -> float:
         """Obtain the reward based on the current state and the action that resulted in the transition to that state."""
         difference = np.abs(np.concatenate((self._state, self._u)) - self.target_state_action)
+        #  When state dimensions are wrapped, -1 == 1 so we should check from which side we are closest to the
+        #  reference. Since usually either no or only a one dimension is wrapped, the calculatiions are done on a need
+        #  to do basis
+        for si, handling in enumerate(self.domain_bound_handling):
+            alternative_difference = None
+            if handling == DomainBound.WRAP:
+                if alternative_difference is None:
+                    alternative_difference = np.abs(
+                        np.concatenate(
+                            (self.denormalize_state(self.normalized_state - 2 * np.sign(self.normalized_state)),
+                             self._u))
+                        - self.target_state_action)
+                difference[si] = min(difference[si], alternative_difference[si])
+
         if self.reward_type == RewardType.ABSOLUTE:
             return float(-1 * np.sum(difference * self.state_action_penalty_weights))
         elif self.reward_type == RewardType.QUADRATIC:
