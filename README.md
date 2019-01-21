@@ -137,11 +137,13 @@ for episode in range(10):
         action = np.random.uniform(-1, 1, size=env.action_shape)  
         state, reward, terminal, _ = env.step(action)
     diagnostics.print_summary() # print to the terminal the number of episodes that have passed, the best reward sum so far and the most recent reward sum (works with all log types)
+    diagnostics.plot_reward_sum_per_episode() # Give a plot of the learning curve (works with all log types)
 
-diagnostics.plot_reward_sum_per_episode() # Give a plot of the learning curve (works with all log types)
 diagnostics.plot_most_recent_trajectory(state=True, action=True, rewards=True) # plot the states, actions and/or reward trajectories during the most recent episode (works with LogType.BEST_AND_LAST_TRAJECTORIES and LogType.ALL_TRAJECTORIES)
 diagnostics.plot_best_trajectory(state=True, action=True, rewards=True) # plot the states, actions and/or reward trajectories during the episode with the highest reward sum so far (works with LogType.BEST_AND_LAST_TRAJECTORIES and LogType.ALL_TRAJECTORIES)
 diagnostics.plot_trajectories(state=True, action=True, rewards=True, episode=3) # plot the states, actions and/or reward trajectories during a specific episode (works only with LogType.ALL_TRAJECTORIES)
+
+input('Press enter to close figures')  # Since the figures do not block, having the script terminate would close them
 ```
 
 ### Using a state-value function for control

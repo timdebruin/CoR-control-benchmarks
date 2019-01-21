@@ -1,8 +1,8 @@
 import warnings
-from typing import Optional
+from typing import Optional, Tuple, Dict
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import cm
 
 from cor_control_benchmarks.control_benchmark import ControlBenchmark, DomainBound
@@ -21,6 +21,12 @@ class Diagnostics(object):
         self.state_color = colors(1)[:-1]
         self.target_color = colors(2)[:-1]
         self.actions_color = colors(3)[:-1]
+
+        self.plots: Dict[
+            str, Tuple[plt.Figure, np.ndarray[plt.Axes]]] = {}  # the figures and axes arrays that are
+        # displayed, indexed by concatenated names on the y-axes
+
+        plt.ion()
 
     @property
     def best_reward_sum(self) -> float:
@@ -120,10 +126,9 @@ class Diagnostics(object):
 
         references = np.ones_like(trajectory) * target if target is not None else None
 
-        fig, axes = plt.subplots(len(y_names), 1, sharex='col')
-        if len(y_names) == 1:
-            axes = [axes]
+        fig, axes = self.get_fig_and_axes(y_names)
         for component_dim, ax in enumerate(axes):
+            ax.clear()
             component_trajectory = trajectory[:, component_dim]
             ax.plot(time, component_trajectory, label=name, color=plot_color)
             if references is not None:
@@ -139,4 +144,15 @@ class Diagnostics(object):
         plt.xlabel(time_name)
         plt.title(self.benchmark.name)
         plt.legend()
-        plt.show()
+        # plt.draw()
+        # plt.show(block=False)
+        fig.canvas.draw()
+
+    def get_fig_and_axes(self, y_names):
+        key = ','.join(y_names)
+        if key not in self.plots:
+            f, a = plt.subplots(len(y_names), 1, sharex='col')
+            if isinstance(a, plt.Axes):
+                a = np.array([a])
+            self.plots[key] = f, a
+        return self.plots[key]
