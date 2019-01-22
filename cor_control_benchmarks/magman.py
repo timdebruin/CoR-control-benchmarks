@@ -25,7 +25,7 @@ class MagmanBenchmark(ControlBenchmark):
         :param do_not_normalize: do not normalize the interface with the user: return states in the benchmark specific
         domain and require actions in the benchmark specific domain."""
         super().__init__(
-            state_names=['ball position [m]', ['ball velocity [m/s]']],
+            state_names=['ball position [m]', 'ball velocity [m/s]'],
             action_names=[f'squared current magnet {i+1}' for i in range(magnets)],
             state_shift=np.array([0.035, 0.]),
             state_scale=np.array([0.07, 0.4]),
