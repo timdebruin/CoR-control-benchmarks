@@ -14,6 +14,7 @@ class Diagnostics(object):
     def __init__(self, benchmark: ControlBenchmark, log: LogType) -> None:
         self.logger = TrajectoryLogger(log=log)
         self.benchmark = benchmark
+        self.last_diagnostics_episode = 0  # last time diagnostics were asked for (used to give mean of recent episodes)
         benchmark.loggers.append(self.logger)
 
         colors = cm.get_cmap('tab10')
@@ -156,3 +157,14 @@ class Diagnostics(object):
                 a = np.array([a])
             self.plots[key] = f, a
         return self.plots[key]
+
+    def get_scalar_diagnostics_dict(self):
+        start = self.last_diagnostics_episode
+        end = len(self.logger.reward_sum_per_episode)
+        result = {
+            'smooth reward sum': np.mean(np.array(self.logger.reward_sum_per_episode[start:end])),
+            'max reward sum': self.best_reward_sum,
+            'last reward sum': self.last_reward_sum
+        }
+        self.last_diagnostics_episode = end
+        return result

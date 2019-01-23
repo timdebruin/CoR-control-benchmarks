@@ -18,14 +18,6 @@ class Trajectory(NamedTuple):
     rewards: List[float]
 
 
-class TrainingResult(object):
-    """Class for storing the relevant parts of a training run, for comparison later"""
-
-    def __init__(self, benchmark_name: str):
-        self.benchmark_name = benchmark_name
-        self.episode_reward_sums
-
-
 class TrajectoryLogger(object):
 
     def __init__(self, log: LogType) -> None:
