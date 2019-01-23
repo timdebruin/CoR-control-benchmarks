@@ -26,7 +26,7 @@ class MagmanBenchmark(ControlBenchmark):
         domain and require actions in the benchmark specific domain."""
         super().__init__(
             state_names=['ball position [m]', 'ball velocity [m/s]'],
-            action_names=[f'squared current magnet {i+1}' for i in range(magnets)],
+            action_names=[f'current magnet {i+1}' for i in range(magnets)],
             state_shift=np.array([0.035, 0.]),
             state_scale=np.array([0.07, 0.4]),
             action_shift=np.array([0.3 for _ in range(magnets)]),
@@ -39,7 +39,7 @@ class MagmanBenchmark(ControlBenchmark):
             target_state=np.array([0.035, 0.]),
             target_action=np.array([0. for _ in range(magnets)]),
             state_penalty_weights=np.array([1., 0.]),
-            action_penalty_weights=np.array([1. for _ in range(magnets)]),
+            action_penalty_weights=np.array([0. for _ in range(magnets)]),
             binary_reward_state_tolerance=np.array([0.01, 0.01]),
             binary_reward_action_tolerance=np.array([1. for _ in range(magnets)]),
             domain_bound_handling=[DomainBound.STOP, DomainBound.IGNORE],
