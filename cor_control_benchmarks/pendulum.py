@@ -15,6 +15,8 @@ class PendulumBenchmark(ControlBenchmark):
                  reward_type: RewardType = RewardType.QUADRATIC,
                  max_voltage: float = 2.,
                  do_not_normalize: bool = False,
+                 state_penalty_weights: np.ndarray = np.array([5., 0.1]),
+                 action_penalty_weights: np.ndarray = np.array([1.]),
                  ) -> None:
         """ Create an instance of the pendulum benchmark.
         :param sampling_time: number of seconds between control decisions and observations.
@@ -39,8 +41,8 @@ class PendulumBenchmark(ControlBenchmark):
             max_seconds=max_seconds,
             target_state=np.array([np.pi, 0.]),
             target_action=np.array([0.]),
-            state_penalty_weights=np.array([5., 0.1]),
-            action_penalty_weights=np.array([1.]),
+            state_penalty_weights=state_penalty_weights,
+            action_penalty_weights=action_penalty_weights,
             binary_reward_state_tolerance=np.array([0.05, 0.1]),
             binary_reward_action_tolerance=np.array([0.1]),
             domain_bound_handling=[DomainBound.WRAP, DomainBound.IGNORE],  # 'Pendulum angle, angular velocity'
