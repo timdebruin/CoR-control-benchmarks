@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cor_control_benchmarks",
-    version="0.3.1",
+    version="0.3.2",
     author="Tim de Bruin",
     author_email="t.d.debruin@tudelft.nl",
     description="This repository contains python (3.6+) implementations of several control benchmarks. ",
