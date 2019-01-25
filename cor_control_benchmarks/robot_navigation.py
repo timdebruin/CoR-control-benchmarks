@@ -25,8 +25,10 @@ class RobotNavigationBenchmark(ControlBenchmark):
             action_shift=np.array([0.1, 0.]),
             action_scale=np.array([0.1, 0.5]),
             initial_states=[
-                np.array([0.5, 0.5, np.pi / 2]),
-                np.array([0.5, 0.5, -np.pi / 2]),
+                np.array([0.25, 0.75, np.pi * 3/4]),
+                np.array([0.75, 0.75, np.pi * 1/4]),
+                np.array([0.25, 0.25, np.pi * -3/4]),
+                np.array([0.75, 0.25, np.pi * -1/4]),
             ],
             sampling_time=sampling_time,
             max_seconds=max_seconds,
