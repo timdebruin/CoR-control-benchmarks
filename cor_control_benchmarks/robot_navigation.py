@@ -34,9 +34,9 @@ class RobotNavigationBenchmark(ControlBenchmark):
             max_seconds=max_seconds,
             target_state=np.array([0.5, 0.5, 0.]),
             target_action=np.array([0., 0.]),
-            state_penalty_weights=np.array([1., 1., 1.]),
+            state_penalty_weights=np.array([2., 2., 0.1]),
             action_penalty_weights=np.array([0., 0.]),
-            binary_reward_state_tolerance=np.array([0.01, 0.01, 0.02]),
+            binary_reward_state_tolerance=np.array([0.05, 0.05, 0.3]),
             binary_reward_action_tolerance=np.array([10., 10.]),
             domain_bound_handling=[DomainBound.IGNORE, DomainBound.IGNORE, DomainBound.WRAP],  # [x, y, phi]
             reward_type=reward_type,
