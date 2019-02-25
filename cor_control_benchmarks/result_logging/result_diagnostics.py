@@ -58,7 +58,7 @@ class Diagnostics(object):
 
     @property
     def last_episode_was_best(self) -> bool:
-        return self.best_episode == len(self.logger.reward_sum_per_episode)
+        return self.best_episode == len(self.logger.reward_sum_per_episode) - 1
 
     def print_summary(self) -> None:
         print(f'Episodes: {len(self.logger.reward_sum_per_episode)}, best reward sum: {self.best_reward_sum}, '
