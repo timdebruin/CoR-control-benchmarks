@@ -20,10 +20,16 @@ class Trajectory(NamedTuple):
 
 class TrajectoryLogger(object):
 
-    def __init__(self, log: LogType) -> None:
+    def __init__(self, log: LogType, gamma: Optional[float]) -> None:
+        self.gamma = gamma
         self.log: LogType = log
+
         self._current_trajectory: Trajectory = Trajectory(states=[], actions=[], rewards=[])
         self.reward_sum_per_episode: List[float] = []
+        self.observed_returns = {
+            'min': np.nan,
+            'max': np.nan
+        }
         self.best_trajectory: Optional[Trajectory] = None
         self.last_trajectory: Optional[Trajectory] = None
         self.episode_trajectories: List[Trajectory] = []
@@ -45,6 +51,14 @@ class TrajectoryLogger(object):
         self._current_trajectory.rewards.append(reward)
         if terminal:
             reward_sum_last = sum(self._current_trajectory.rewards)
+            if self.gamma:
+                returns = [0]
+                for reward in reversed(self._current_trajectory.rewards):
+                    returns.append(returns[-1] * self.gamma + reward)
+                if max(returns) > self.observed_returns['max'] or np.isnan(self.observed_returns['max']):
+                    self.observed_returns['max'] = max(returns)
+                if min(returns) < self.observed_returns['min'] or np.isnan(self.observed_returns['min']):
+                    self.observed_returns['min'] = min(returns)
 
             if self.log >= LogType.BEST_AND_LAST_TRAJECTORIES:
                 self._current_trajectory.states.append(next_state)

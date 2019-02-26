@@ -1,5 +1,5 @@
 import warnings
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,8 +11,8 @@ from cor_control_benchmarks.result_logging.trajectory_logging import LogType, Tr
 
 class Diagnostics(object):
 
-    def __init__(self, benchmark: ControlBenchmark, log: LogType) -> None:
-        self.logger = TrajectoryLogger(log=log)
+    def __init__(self, benchmark: ControlBenchmark, log: LogType, gamma: Optional[float] = None) -> None:
+        self.logger = TrajectoryLogger(log=log, gamma=gamma)
         self.benchmark = benchmark
         self.last_diagnostics_episode = 0  # last time diagnostics were asked for (used to give mean of recent episodes)
         benchmark.loggers.append(self.logger)
@@ -59,6 +59,14 @@ class Diagnostics(object):
     @property
     def last_episode_was_best(self) -> bool:
         return self.best_episode == len(self.logger.reward_sum_per_episode) - 1
+
+    @property
+    def highest_observed_return(self) -> Union[float, np.nan]:
+        return self.logger.observed_returns['max']
+
+    @property
+    def lowest_observed_return(self) -> Union[float, np.nan]:
+        return self.logger.observed_returns['min']
 
     def print_summary(self) -> None:
         print(f'Episodes: {len(self.logger.reward_sum_per_episode)}, best reward sum: {self.best_reward_sum}, '
