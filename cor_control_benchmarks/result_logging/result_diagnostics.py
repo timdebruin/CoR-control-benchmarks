@@ -61,11 +61,11 @@ class Diagnostics(object):
         return self.best_episode == len(self.logger.reward_sum_per_episode) - 1
 
     @property
-    def highest_observed_return(self) -> Union[float, np.nan]:
+    def highest_observed_return(self) ->float:
         return self.logger.observed_returns['max']
 
     @property
-    def lowest_observed_return(self) -> Union[float, np.nan]:
+    def lowest_observed_return(self) -> float:
         return self.logger.observed_returns['min']
 
     def print_summary(self) -> None:
