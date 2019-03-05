@@ -104,9 +104,9 @@ Drive a navigation robot to a target position and have it stand there facing the
 
 ```python
 import cor_control_benchmarks as cb
-env = cb.SegwayBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
+env = cb.RobotNavigationBenchmark(sampling_time=0.01, max_seconds=2.5, reward_type=cb.RewardType.ABSOLUTE)
 ```
-See [cor_control_benchmarks/segway.py](cor_control_benchmarks/segway.py) for the dynamics model and available parameters.
+See [cor_control_benchmarks/robot_navigation.py](cor_control_benchmarks/robot_navigation.py) for the dynamics model and available parameters.
 
 
 ## Advanced examples
